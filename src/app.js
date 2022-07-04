@@ -58,18 +58,22 @@ if (navigator.geolocation) {
               <div class="right">
                   <div class="wrapper">
                       <img src=${image_url} alt="">
-                      <div class="d-temp">${temp}<sup> °C</sup></div>
+                      <div class="d-temp">${Math.round(
+                        temp
+                      )}<sup> °C</sup></div>
                   </div>
                   <div class="d-desc">${desc}</div>
               </div>
           </section>
           <section class="mid">
               <div class="left">
-                  <div class="min-temp"><sub>Min</sub>${min}<sup>°C</sup></div>
+                  <div class="min-temp"><sub>Min</sub>${Math.round(
+                    min
+                  )}<sup>°C</sup></div>
               </div>
               <div class="right">
                   <div class="max-temp">
-                      <sub>Max</sub>${max}<sup>°C</sup>
+                      <sub>Max</sub>${Math.round(max)}<sup>°C</sup>
                   </div>
               </div>
 
