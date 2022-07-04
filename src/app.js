@@ -1,5 +1,4 @@
-import { secret } from "../secret.js";
-const api = secret;
+const api = "8c0128a962301a10c65fdb2279ea5358";
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(async (position) => {
     const { latitude, longitude } = position.coords;
