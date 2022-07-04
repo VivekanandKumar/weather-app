@@ -140,6 +140,10 @@ body {
   }
 }
 @media screen and (max-width: 400px) {
+  .container {
+    width: 95%;
+    padding: 20px 8px;
+  }
   sup {
     font-size: 12px !important;
   }
