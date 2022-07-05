@@ -1,55 +1,97 @@
-const api = "8c0128a962301a10c65fdb2279ea5358";
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const { latitude, longitude } = position.coords;
-    const exclude = "hourly,minutely";
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=${exclude}&units=metric&{""}&appid=${api}`;
-    const city_url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${api}`;
-    // fetching data
-    const currentCity = await (await fetch(city_url)).json();
-    const data = await (await fetch(url)).json();
+const main = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((currentPosition) => {
+      const lat = currentPosition.coords.latitude;
+      const long = currentPosition.coords.longitude;
+      apiCall(lat, long, dataDisplay);
+    });
+  } else {
+    alert("Please enable location access");
+  }
+};
 
-    const icon = data.current.weather[0].icon;
-    const temp = data.current.temp;
-    const feels = data.current.feels_like;
-    const city = currentCity.name;
-    const desc = currentCity.weather[0].main;
-    const humidity = currentCity.main.humidity;
-    const visibility = currentCity.visibility;
-    const speed = currentCity.wind.speed;
-    const pressure = currentCity.main.pressure;
-    const uv = data.current.uvi;
-    document
-      .querySelector(".image")
-      .setAttribute("src", "http://openweathermap.org/img/w/" + icon + ".png");
+const apiCall = async (lat, long, currentWeather) => {
+  const api = "8c0128a962301a10c65fdb2279ea5358";
+  const excl = "hourly,minutely";
+  const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&units=metric&appid=${api}&exclude=${excl}`;
+  const city_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${api}`;
+  const data = await (await fetch(url)).json();
+  const current = await (await fetch(city_url)).json();
+  currentWeather(data, current.name);
+};
 
-    document.querySelector(".temp").innerHTML =
-      Math.round(temp) + "<sup>°C</sup>";
+const dataDisplay = (data, city) => {
+  const icon = data.current.weather[0].icon;
+  const temp = data.current.temp;
+  const feels = data.current.feels_like;
+  const desc = data.current.weather[0].description;
+  const humidity = data.current.humidity;
+  const visibility = data.current.visibility;
+  const speed = data.current.wind_speed * 3.6;
+  const pressure = data.current.pressure;
+  const uv = data.current.uvi;
+  const obj = [
+    {
+      classname: ".temp",
+      classdata: `${Math.round(temp)}<sup>°C</sup>`,
+    },
+    {
+      classname: ".bottom",
+      classdata: desc,
+    },
+    {
+      classname: ".city",
+      classdata: city,
+    },
+    {
+      classname: ".feels",
+      classdata: `Feels like ${Math.round(feels)}<sup>°C</sup>`,
+    },
+    {
+      classname: ".humidity .value",
+      classdata: `${humidity} %`,
+    },
+    {
+      classname: ".visibility .value",
+      classdata: `${Math.round(visibility / 1000)} Km`,
+    },
+    {
+      classname: ".speed .value",
+      classdata: `${Math.round(speed)} Km/Hr`,
+    },
+    {
+      classname: ".pressure .value",
+      classdata: `${pressure} hPa`,
+    },
+    {
+      classname: ".uv .value",
+      classdata: `${Math.round(uv)} of 10`,
+    },
+  ];
+  document
+    .querySelector(".image")
+    .setAttribute("src", "http://openweathermap.org/img/w/" + icon + ".png");
+  obj.forEach((objData) => {
+    display(objData.classname, objData.classdata);
+  });
+  dailyDisplay(data.daily);
+};
 
-    document.querySelector(".bottom").innerHTML = desc;
-    document.querySelector(".city").innerHTML = city;
-    document.querySelector(".feels").innerHTML =
-      "Feels like " + Math.round(feels) + " <sup>°C</sup>";
-    document.querySelector(".humidity .value").textContent = humidity + " %";
-    document.querySelector(".visibility .value").textContent =
-      Math.round(visibility / 1000) + " Km";
-    document.querySelector(".speed .value").textContent =
-      Math.round(speed) + " Km/hr";
-    document.querySelector(".pressure .value").textContent = pressure + " hPa";
-    document.querySelector(".uv .value").textContent =
-      Math.round(uv) + " of 10";
-
-    data.daily.forEach((element) => {
-      const day = moment(element.dt * 1000).format("dddd");
-      const date = moment(element.dt * 1000).format("DD MMMM, YYYY");
-      const temp = element.temp.day;
-      const desc = element.weather[0].main;
-      const min = element.temp.min;
-      const max = element.temp.max;
-      const icon = element.weather[0].icon;
-      const image_url = "http://openweathermap.org/img/w/" + icon + ".png";
-      const dailyWeather = document.querySelector(".daily");
-      dailyWeather.innerHTML += `
+const display = (c, d) => {
+  document.querySelector(c).innerHTML = d;
+};
+const dailyDisplay = (daily) => {
+  daily.forEach((element) => {
+    const day = moment(element.dt * 1000).format("dddd");
+    const date = moment(element.dt * 1000).format("DD MMMM, YYYY");
+    const temp = element.temp.day;
+    const desc = element.weather[0].main;
+    const min = element.temp.min;
+    const max = element.temp.max;
+    const icon = element.weather[0].icon;
+    const image_url = "http://openweathermap.org/img/w/" + icon + ".png";
+    const dailyWeather = document.querySelector(".daily");
+    dailyWeather.innerHTML += `
       <div class="d-card">
           <section class="top">
               <div class="left">
@@ -79,8 +121,6 @@ if (navigator.geolocation) {
 
           </section>
       </div>`;
-    });
   });
-} else {
-  alert("Please allow your location permission");
-}
+};
+main();
