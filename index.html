@@ -1,69 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Forecast</title>
-    <link rel="icon" href="./images/sunset.png">
-    <link rel="stylesheet" href="./src/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather Forecast</title>
+        <link rel="icon" href="./images/sunset.png">
+        <link rel="stylesheet" href="./src/style.css">
+        <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+        <script src="./src/zipcode.js"></script>
+    </head>
 
+    <body>
 
-</head>
-
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="left">
-                <div class="top">
-                    <img class="image" src="" />
-                    <h1 class="temp"></h1>
+        <div class="container">
+            <nav class="flex justify-between items-center">
+                <div class="logo">
+                    <h2>Weather Forecast</h2>
                 </div>
-                <div class="bottom">
+                <div class="search-wrapper flex justify-between">
+                    <input placeholder="Pincode" class="hide" type="number" maxlength="6" id="search-input" onblur="handleBlur(this)">
+                    <img src="images/search.png" width="32px" height="32px" id="search-btn" style="padding: 6px;">
+                </div>
+            </nav>
+            <div class="header">
+                <div class="left">
+                    <div class="top">
+                        <img class="image" src="" />
+                        <h1 class="temp"></h1>
+                    </div>
+                    <div class="bottom">
+                    </div>
+                </div>
+                <div class="right">
+                    <h1 class="city"></h1>
+                    <div class="feels"></div>
                 </div>
             </div>
-            <div class="right">
-                <h1 class="city"></h1>
-                <div class="feels"></div>
+
+            <div class="main">
+                <div class="card humidity">
+                    <img src="./images/humidity.png" alt="humidity">
+                    <div class="value"></div>
+                    <div class="hero">Humidity</div>
+                </div>
+                <div class="card visibility">
+                    <img src="./images/visibility.png" alt="">
+                    <div class="value"></div>
+                    <div class="hero">Visibility</div>
+                </div>
+                <div class="card speed">
+                    <img src="./images/wind-speed.png" alt="">
+                    <div class="value"></div>
+                    <div class="hero">Wind Speed</div>
+                </div>
+                <div class="card pressure">
+                    <img src="./images/pressure.png" alt="">
+                    <div class="value"></div>
+                    <div class="hero">Air Pressure</div>
+                </div>
+                <div class="card uv">
+                    <img src="./images/uv-index.png" alt="">
+                    <div class="value"></div>
+                    <div class="hero">UV Index</div>
+                </div>
+            </div>
+
+            <div class="daily">
             </div>
         </div>
+        <!-- <div class="loadingscreen">
+        <img src="./images/loading.svg" alt="">
+    </div> -->
 
-        <div class="main">
-            <div class="card humidity">
-                <img src="./images/humidity.png" alt="humidity">
-                <div class="value"></div>
-                <div class="hero">Humidity</div>
-            </div>
-            <div class="card visibility">
-                <img src="./images/visibility.png" alt="">
-                <div class="value"></div>
-                <div class="hero">Visibility</div>
-            </div>
-            <div class="card speed">
-                <img src="./images/wind-speed.png" alt="">
-                <div class="value"></div>
-                <div class="hero">Wind Speed</div>
-            </div>
-            <div class="card pressure">
-                <img src="./images/pressure.png" alt="">
-                <div class="value"></div>
-                <div class="hero">Air Pressure</div>
-            </div>
-            <div class="card uv">
-                <img src="./images/uv-index.png" alt="">
-                <div class="value"></div>
-                <div class="hero">UV Index</div>
-            </div>
-        </div>
-
-        <div class="daily">
-        </div>
-    </div>
-
-</body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
-<script src="./src/app.js"></script>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="./src/app.js"></script>
 
 </html>

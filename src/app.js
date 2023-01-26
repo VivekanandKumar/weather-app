@@ -1,20 +1,62 @@
-const main = () => {
+const searchBtn = document.getElementById("search-btn");
+const inputPin = document.getElementById("search-input");
+const wrapper = document.querySelector('.search-wrapper');
+searchBtn.addEventListener('click', (el) => {
+  if (searchBtn.getAttribute('src').indexOf('close') > -1) {
+    inputPin.value = '';
+    searchBtn.setAttribute('src', 'images/search.png');
+    inputPin.focus();
+    return;
+  }
+  inputPin.classList.remove('hide');
+  inputPin.focus();
+});
+
+inputPin.addEventListener('keyup', (el) => {
+  const keyValue = el.target.value;
+  if (keyValue.length) {
+    searchBtn.setAttribute('src', 'images/close.png');
+    if (inputPin.value.length) {
+      const pincode = inputPin.value;
+      if (pincode.length == 6) {
+        main(pincode);
+      }
+    }
+  } else {
+    searchBtn.setAttribute('src', 'images/search.png');
+  }
+})
+
+
+const main = (pincode) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((currentPosition) => {
-      const lat = currentPosition.coords.latitude;
-      const long = currentPosition.coords.longitude;
-      apiCall(lat, long, dataDisplay);
+      let lat = currentPosition.coords.latitude;
+      let long = currentPosition.coords.longitude;
+      apiCall(lat, long, pincode, dataDisplay);
     });
-  } else {
-    alert("Please enable location access");
   }
 };
 
-const apiCall = async (lat, long, currentWeather) => {
+const apiCall = async (lat, long, pincode, currentWeather) => {
   const api = "8c0128a962301a10c65fdb2279ea5358";
+  const apiKey = "7b5b7092e07305fcb5aa76f751d0f0c9";
   const excl = "hourly,minutely";
+  const zipurl = `https://thezipcodes.com/api/v1/search?zipCode=${pincode}&countryCode=IN&apiKey=${apiKey}`;
+  const zipdata = await (await fetch(zipurl)).json();
+  if (zipdata.location.length !== 0) {
+    const zipData = zipdata.location[0];
+    lat = zipData.latitude;
+    long = zipData.longitude;
+  }else{
+    if(pincode){
+      alert('Please Check Pincode !');
+      return;
+    }
+  }
   const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&units=metric&appid=${api}&exclude=${excl}`;
   const city_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${api}`;
+
   const data = await (await fetch(url)).json();
   const current = await (await fetch(city_url)).json();
   currentWeather(data, current.name);
@@ -81,6 +123,8 @@ const display = (c, d) => {
   document.querySelector(c).innerHTML = d;
 };
 const dailyDisplay = (daily) => {
+  const dailyWeather = document.querySelector(".daily");
+  dailyWeather.innerHTML = '';
   daily.forEach((element) => {
     const day = moment(element.dt * 1000).format("dddd");
     const date = moment(element.dt * 1000).format("DD MMMM, YYYY");
@@ -90,7 +134,6 @@ const dailyDisplay = (daily) => {
     const max = element.temp.max;
     const icon = element.weather[0].icon;
     const image_url = "http://openweathermap.org/img/w/" + icon + ".png";
-    const dailyWeather = document.querySelector(".daily");
     dailyWeather.innerHTML += `
       <div class="d-card">
           <section class="top">
@@ -101,8 +144,8 @@ const dailyDisplay = (daily) => {
                   <div class="wrapper">
                       <img src=${image_url} alt="">
                       <div class="d-temp">${Math.round(
-                        temp
-                      )}<sup> °C</sup></div>
+      temp
+    )}<sup> °C</sup></div>
                   </div>
                   <div class="d-desc">${desc}</div>
               </div>
@@ -110,8 +153,8 @@ const dailyDisplay = (daily) => {
           <section class="mid">
               <div class="left">
                   <div class="min-temp"><sub>Min</sub>${Math.round(
-                    min
-                  )}<sup>°C</sup></div>
+      min
+    )}<sup>°C</sup></div>
               </div>
               <div class="right">
                   <div class="max-temp">
@@ -123,4 +166,20 @@ const dailyDisplay = (daily) => {
       </div>`;
   });
 };
+const getPositionByPincode = async (pincode) => {
+  try {
+    const result = await (await fetch(url)).json();
+    return result.location[0];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 main();
+
+
+function handleBlur(el) {
+  if (el.value.length > 0) return;
+  inputPin.classList.add('hide');
+  // wrapper.classList.add('deaminate');
+}
