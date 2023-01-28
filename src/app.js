@@ -1,6 +1,7 @@
 const searchBtn = document.getElementById("search-btn");
 const inputPin = document.getElementById("search-input");
 const wrapper = document.querySelector('.search-wrapper');
+const loading = document.getElementById('display_loading');
 searchBtn.addEventListener('click', (el) => {
   if (searchBtn.getAttribute('src').indexOf('close') > -1) {
     inputPin.value = '';
@@ -29,6 +30,7 @@ inputPin.addEventListener('keyup', (el) => {
 
 
 const main = (pincode) => {
+  loading.classList.remove('hide');
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((currentPosition) => {
       let lat = currentPosition.coords.latitude;
@@ -36,9 +38,11 @@ const main = (pincode) => {
       apiCall(lat, long, pincode, dataDisplay);
     });
   }
+  // loading.classList.add('hide');
 };
 
 const apiCall = async (lat, long, pincode, currentWeather) => {
+  loading.classList.remove('hide');
   const api = "8c0128a962301a10c65fdb2279ea5358";
   const apiKey = "7b5b7092e07305fcb5aa76f751d0f0c9";
   const excl = "hourly,minutely";
@@ -51,6 +55,7 @@ const apiCall = async (lat, long, pincode, currentWeather) => {
   }else{
     if(pincode){
       alert('Please Check Pincode !');
+      loading.classList.add('hide');
       return;
     }
   }
@@ -60,9 +65,11 @@ const apiCall = async (lat, long, pincode, currentWeather) => {
   const data = await (await fetch(url)).json();
   const current = await (await fetch(city_url)).json();
   currentWeather(data, current.name);
+  loading.classList.add('hide');
 };
 
 const dataDisplay = (data, city) => {
+  loading.classList.remove('hide');
   const icon = data.current.weather[0].icon;
   const temp = data.current.temp;
   const feels = data.current.feels_like;
@@ -117,12 +124,14 @@ const dataDisplay = (data, city) => {
     display(objData.classname, objData.classdata);
   });
   dailyDisplay(data.daily);
+  loading.classList.add('hide');
 };
 
 const display = (c, d) => {
   document.querySelector(c).innerHTML = d;
 };
 const dailyDisplay = (daily) => {
+  loading.classList.remove('hide');
   const dailyWeather = document.querySelector(".daily");
   dailyWeather.innerHTML = '';
   daily.forEach((element) => {
@@ -165,6 +174,7 @@ const dailyDisplay = (daily) => {
           </section>
       </div>`;
   });
+  loading.classList.add('hide');
 };
 const getPositionByPincode = async (pincode) => {
   try {
